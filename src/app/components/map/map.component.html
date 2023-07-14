@@ -1,5 +1,5 @@
 <div class="app-container">
-  <app-plant-power-filter (filterChanged)="onFilterChange($event)"></app-plant-power-filter>
+  <app-plant-power-filter (filterChanged)="filterPowerPlants($event)"></app-plant-power-filter>
 
   <div class="map-container">
     <google-map #mapContainer id="mapContainer" [center]="center" [options]="mapOptions">

@@ -52,6 +52,7 @@ export const US_STATES_POSITIONS = {
 };
 
 export const US_STATES = [
+  { code: '', name: 'All' },
   { code: 'AL', name: 'Alabama' },
   { code: 'AK', name: 'Alaska' },
   { code: 'AZ', name: 'Arizona' },

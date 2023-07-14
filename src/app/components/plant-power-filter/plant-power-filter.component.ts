@@ -1,17 +1,14 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { USState } from 'src/app/models/us-state.model';
 import { US_STATES } from 'src/app/constants/us-states';
-
-export interface Filter {
-  state: string;
-  topPlants?: number;
-}
+import { Filter } from 'src/app/models/filter.model';
 
 @Component({
   selector: 'app-plant-power-filter',
   templateUrl: './plant-power-filter.component.html',
   styleUrls: ['./plant-power-filter.component.scss'],
 })
+
 export class PlantPowerFilterComponent {
   states: USState[] = US_STATES;
 
