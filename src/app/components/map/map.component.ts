@@ -3,6 +3,7 @@ import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { US_STATES_POSITIONS } from 'src/app/constants/us-states';
 import { Generator } from 'src/app/models/generator.model';
 import { HttpService } from 'src/services/http.service';
+import { Filter } from '../plant-power-filter/plant-power-filter.component';
 
 @Component({
   selector: 'app-map',
@@ -13,9 +14,9 @@ export class MapComponent implements OnInit {
   @ViewChild('mapContainer') mapContainer!: any;
   @ViewChild(MapInfoWindow) infoWindow: any;
 
-  powerPlantsData: Generator[] = [];
+  filteredPowerPlants: Generator[] = [];
   selectedPlant?: Generator;
-  selectedState?: string;
+  filter?: Filter;
 
   center: google.maps.LatLngLiteral = {
     lat: 39.81243465853298,
@@ -28,7 +29,7 @@ export class MapComponent implements OnInit {
   markerOptions: google.maps.MarkerOptions = {
     draggable: false,
   };
-  
+
   loading: boolean = false;
 
   constructor(private httpService: HttpService) {}
@@ -41,7 +42,7 @@ export class MapComponent implements OnInit {
     this.loading = true;
     this.httpService.get(`plants/top/${10}`).subscribe(
       (data) => {
-        this.powerPlantsData = data;
+        this.filteredPowerPlants = data;
         this.setMarkerPositions();
         this.loading = false;
       },
@@ -53,33 +54,37 @@ export class MapComponent implements OnInit {
   }
 
   setMarkerPositions() {
-    this.powerPlantsData.forEach((plant: Generator) => {
-      plant['Position'] =
-        US_STATES_POSITIONS[
-          plant['Plant state abbreviation'] as keyof typeof US_STATES_POSITIONS
-        ];
-    });
+    this.center =
+      US_STATES_POSITIONS[
+        // plant['Plant state abbreviation'] as keyof typeof US_STATES_POSITIONS
+        this.filter?.state as keyof typeof US_STATES_POSITIONS
+      ];
+     //   US_STATES_POSITIONS[
+      //     plant['Plant state abbreviation'] as keyof typeof US_STATES_POSITIONS
+      //   ];
   }
 
   getMarkerTitle(plant: Generator): string {
     return `${plant['Plant name']}\nNet Generation: ${plant['Generator annual net generation (MWh)']} MWh\nPercentage: ${plant['Percentage']}%`;
   }
 
-  onStateChange(state: string) {
-    this.selectedState = state;
+  onFilterChange(filterUpdate: Filter) {
+    // this.powerPlantService.setFilter(event.state, event.topPlants);
+    // this.filterPowerPlants();
+    alert(JSON.stringify(filterUpdate))
+    this.filter = filterUpdate;
     this.filterByState();
   }
 
   filterByState() {
     this.loading = true;
-    this.httpService.get(`plants/state/${this.selectedState}`).subscribe(
+    this.httpService.get(`plants/state/${this.filter?.state}`).subscribe(
       (data) => {
-        this.powerPlantsData = data;
+        this.filteredPowerPlants = data;
         this.setMarkerPositions();
         this.loading = false;
       },
       (error) => {
-        console.error('Error fetching power plant data:', error);
         this.loading = false;
       },
     );

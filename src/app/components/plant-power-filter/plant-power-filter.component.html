@@ -1,6 +1,12 @@
 <div class="filter-container">
-  <h2>Filter By State</h2>
-  <select [(ngModel)]="selectedState" (ngModelChange)="onStateChange()">
-    <option *ngFor="let state of states" [ngValue]="state">{{ state.name }}</option>
-  </select>
+  <div class="filter">
+    <h2>Filter By State</h2>
+    <select [(ngModel)]="selectedState" (ngModelChange)="onFilterChange()">
+      <option *ngFor="let state of states" [ngValue]="state">{{ state.name }}</option>
+    </select>
+  </div>
+  <div class="filter">
+    <h2>Filter By Top Plants</h2>
+    <input type="number" [(ngModel)]="selectedTopPlants" (change)="onFilterChange()" min="1">
+  </div>
 </div>

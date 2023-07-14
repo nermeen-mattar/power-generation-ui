@@ -17,5 +17,5 @@ export interface Generator {
   'Generator year on-line': string;
   'Generator planned or actual retirement year': string;
   Percentage: string;
-  Position?: google.maps.LatLngLiteral;
+  Position: google.maps.LatLngLiteral;
 }
