@@ -1,0 +1,22 @@
+<div class="app-container">
+    <app-plant-power-filter (stateChanged)="onStateChange($event)"></app-plant-power-filter>
+  
+    <div class="map-container">
+      <google-map #mapContainer id="mapContainer" [center]="center" [options]="mapOptions">
+        <map-marker #marker="mapMarker" *ngFor="let powerPlant of powerPlantsData"
+                    [position]="powerPlant.Position || center"
+                    [options]="markerOptions"
+                    (mapClick)="openInfoWindow(marker, powerPlant)">
+          <map-info-window #infoWindow>
+            <div *ngIf="selectedPlant" class="info-window">
+              <h4>{{ selectedPlant['Plant name'] }}</h4>
+              <p>Net Generation: {{ selectedPlant['Generator annual net generation (MWh)'] }} MWh</p>
+              <p>Power Generation Percentage: {{ selectedPlant['Percentage'] }}% ({{ selectedPlant['Plant state abbreviation'] }} State)</p>
+            </div>
+          </map-info-window>
+        </map-marker>
+      </google-map>
+      <div class="loading-spinner" *ngIf="loading"></div>
+    </div>
+  </div>
+  
