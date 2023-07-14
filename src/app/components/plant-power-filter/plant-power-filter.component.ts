@@ -8,7 +8,6 @@ import { Filter } from 'src/app/models/filter.model';
   templateUrl: './plant-power-filter.component.html',
   styleUrls: ['./plant-power-filter.component.scss'],
 })
-
 export class PlantPowerFilterComponent {
   states: USState[] = US_STATES;
 

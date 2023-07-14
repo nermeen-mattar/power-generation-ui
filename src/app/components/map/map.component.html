@@ -1,9 +1,9 @@
 <div class="app-container">
   <app-plant-power-filter (filterChanged)="filterPowerPlants($event)"></app-plant-power-filter>
-
+  
   <div class="map-container">
-    <google-map #mapContainer id="mapContainer" [center]="center" [options]="mapOptions">
-      <map-marker #marker="mapMarker" *ngFor="let powerPlant of filteredPowerPlants"
+    <google-map width="600px" height="600px" [center]="center" [options]="mapOptions">
+      <map-marker #marker="mapMarker" *ngFor="let powerPlant of filteredPowerPlants$ | async"
                   [position]="powerPlant.Position"
                   [options]="markerOptions"
                   (mapClick)="openInfoWindow(marker, powerPlant)">
@@ -11,11 +11,13 @@
           <div *ngIf="selectedPlant" class="info-window">
             <h4>{{ selectedPlant['Plant name'] }}</h4>
             <p>Net Generation: {{ selectedPlant['Generator annual net generation (MWh)'] }} MWh</p>
-            <p>Power Generation Percentage: {{ selectedPlant['Percentage'] }}% ({{ selectedPlant['Plant state abbreviation'] }} State)</p>
+            <p>Percentage: {{ selectedPlant['Percentage'] }}% ({{ selectedPlant['Plant state abbreviation'] }} State)</p>
           </div>
         </map-info-window>
       </map-marker>
     </google-map>
     <div class="loading-spinner" *ngIf="loading"></div>
   </div>
+  <p class="map-description" *ngIf="!error">The map displays power plants in the United States. Each plant is represented by a marker. When you click on a marker, the following information is shown: the plant's name, net generation in megawatt-hours (MWh), and the percentage of power generated compared to the total for the selected state.</p>
+  <p class="error-message" *ngIf="error">Failed to fetch power plant data. Please try again later.</p>
 </div>

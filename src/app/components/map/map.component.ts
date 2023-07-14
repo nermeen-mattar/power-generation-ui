@@ -4,6 +4,8 @@ import { US_STATES_POSITIONS } from 'src/app/constants/us-states';
 import { Filter } from 'src/app/models/filter.model';
 import { Generator } from 'src/app/models/generator.model';
 import { HttpService } from 'src/services/http.service';
+import { Observable, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-map',
@@ -11,11 +13,11 @@ import { HttpService } from 'src/services/http.service';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
-  @ViewChild('mapContainer') mapContainer!: any;
   @ViewChild(MapInfoWindow) infoWindow: any;
 
-  filteredPowerPlants: Generator[] = [];
+  filteredPowerPlants$: Observable<Generator[]> = of([]);
   selectedPlant?: Generator;
+  error: boolean = false;
 
   center: google.maps.LatLngLiteral = {
     lat: 39.81243465853298,
@@ -37,40 +39,33 @@ export class MapComponent implements OnInit {
     this.updateMap();
   }
 
-  /**
-   * Updates the map by fetching power plant data based on the provided filter.
-   * If no filter is provided, it displays all power plants.
-   *
-   * This implementation offers users the flexibility to filter power plants based on their preferences. 
-   * They can choose to view all power plants in the US or narrow down the results by selecting the top plants
-   * in a specific state. Additionally, users have the option to filter by the top plants across all states in the US.
-   * 
-   * @param filter The filter object containing state and topPlants information.
-   *               It is intended to Pass an empty state and topPlants to display all power plants initially.
- */
   updateMap(filter: Filter = { state: '', topPlants: undefined }) {
     this.loading = true;
-    this.httpService.get(`plants?limit=${filter?.topPlants || ''}&state=${filter.state}`).subscribe(
-      (data) => {
-        this.filteredPowerPlants = data;
-        this.setMarkerPositions(filter.state);
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Error fetching power plant data:', error);
-        this.loading = false;
-      },
-    );
+    this.error = false;
+    this.filteredPowerPlants$ = this.httpService
+      .get(`plants?limit=${filter?.topPlants || ''}&state=${filter.state}`)
+      .pipe(
+        finalize(() => {
+          this.setMarkerPositions(filter.state);
+          this.loading = false;
+        }),
+        catchError(() => {
+          this.loading = false;
+          this.error = true;
+          return of([]);
+        })
+      );
   }
 
   setMarkerPositions(state: string) {
-    this.center = US_STATES_POSITIONS[
-        state as keyof typeof US_STATES_POSITIONS
-      ];
+    this.center =
+      US_STATES_POSITIONS[state as keyof typeof US_STATES_POSITIONS];
   }
 
   getMarkerTitle(plant: Generator): string {
-    return `${plant['Plant name']}\nNet Generation: ${plant['Generator annual net generation (MWh)']} MWh\nPercentage: ${plant['Percentage']}%`;
+    return `${plant['Plant name']}\nNet Generation: ${
+      plant['Generator annual net generation (MWh)']
+    } MWh\nPercentage: ${plant['Percentage']}%`;
   }
 
   filterPowerPlants(filterUpdate: Filter) {

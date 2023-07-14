@@ -1,5 +1,4 @@
-
 export interface Filter {
-    state: string;
-    topPlants?: number;
+  state: string;
+  topPlants?: number;
 }

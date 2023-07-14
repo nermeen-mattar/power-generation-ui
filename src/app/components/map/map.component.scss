@@ -26,6 +26,19 @@
         margin-bottom: 10px;
       }
     }
+    
+    .map-description {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #555;
+      width: 600px;
+    }
+    
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
   
     .loading-spinner {
       position: absolute;
