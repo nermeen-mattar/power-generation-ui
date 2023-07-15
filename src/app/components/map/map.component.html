@@ -11,7 +11,9 @@
           <div *ngIf="selectedPlant" class="info-window">
             <h4>{{ selectedPlant['Plant name'] }}</h4>
             <p>Net Generation: {{ selectedPlant['Generator annual net generation (MWh)'] }} MWh</p>
-            <p>Percentage: {{ selectedPlant['Percentage'] }}% ({{ selectedPlant['Plant state abbreviation'] }} State)</p>
+            <p>Percentage: {{ selectedPlant['Percentage'] ? selectedPlant['Percentage'] + '%' : 'No percentage available' }}
+              ({{ selectedPlant['Plant state abbreviation'] }} State)
+            </p>
           </div>
         </map-info-window>
       </map-marker>
